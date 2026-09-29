@@ -1,5 +1,0 @@
-# The notebooks run as-is in MOCK mode on the Python standard library — no install needed.
-# Install this only to run them against a REAL model (see the README):
-openai>=1.0
-# NB9 additionally uses `requests` only if you point it at a real FHIR server:
-requests>=2.28
