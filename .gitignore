@@ -11,3 +11,5 @@ __pycache__/
 .mypy_cache/
 artifacts/
 *.log
+.pages/
+_site/

@@ -6,6 +6,12 @@ Home introduces the agent–tool–environment–human relationship, four curric
 
 All cases are fictional or synthetic. The application is for research and education only and must not be used for patient care.
 
+## Public browser edition
+
+**[Launch the GitHub Pages application](https://rohit5khanna.github.io/Agentic-AI-Healthcare-Lab_IC2/)**
+
+This WebAssembly edition runs entirely in the browser and offers Explore and Replay modes. Live mode is deliberately unavailable there so participants are never asked to expose an API key. The deployment workflow builds the public edition from the canonical application; generated files are not committed.
+
 ## Run the application
 
 ```bash
@@ -25,7 +31,7 @@ marimo edit healthcare_agent_learning_lab.py
 
 - **Explore:** deterministic teaching behavior; no API key required.
 - **Replay:** clearly labelled representative trace behavior; no new model call.
-- **Live:** genuine model calls for model-based demonstrations. It requires `OPENAI_API_KEY` and `MODEL` in the server environment.
+- **Live:** genuine model calls for model-based demonstrations. It requires `OPENAI_API_KEY` and `MODEL` in a trusted local or server environment and is not included in the public browser selector.
 
 Demo 6 intentionally performs all 76 sequential calls in Live mode. Its latency, token use, and cost are part of the workshop lesson.
 

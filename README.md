@@ -9,6 +9,12 @@ The repository provides the same ten-part curriculum in two complementary format
 
 All cases and records are fictional or synthetic. This repository is intended for research and education; it is not a clinical protocol or patient-care system.
 
+## Open the public learning lab
+
+**[Launch the interactive Marimo learning lab](https://rohit5khanna.github.io/Agentic-AI-Healthcare-Lab_IC2/)**
+
+The public GitHub Pages edition runs entirely in the visitor's browser and provides **Explore** and **Replay** modes without an API key. Live model calls remain available only in a facilitator-controlled local or server deployment so credentials are never entered into the public browser application.
+
 ## Curriculum
 
 | # | Demonstration | Central question |
@@ -41,7 +47,7 @@ jupyter lab
 
 ### Marimo
 
-Use Marimo for a workshop-friendly, single-application experience that lets participants select any demonstration from a curriculum menu.
+Use Marimo locally for the complete workshop-friendly application, including optional facilitator-controlled Live mode.
 
 ```bash
 cd "Agentic Learning Lab Marimo"
@@ -55,7 +61,7 @@ marimo run healthcare_agent_learning_lab.py
 
 - **Explore:** deterministic teaching behavior with no API key.
 - **Replay:** preserved representative behavior with no new model call.
-- **Live:** authentic model behavior with visible latency and token use. Live mode requires `OPENAI_API_KEY` and `MODEL` in the environment.
+- **Live:** authentic model behavior with visible latency and token use. Live mode requires `OPENAI_API_KEY` and `MODEL` in a trusted local or server environment and is intentionally disabled on GitHub Pages.
 
 Never place an API key in a notebook cell or commit it to the repository. Copy `.env.example` to an untracked `.env`, or configure credentials in the shell that launches the application.
 
