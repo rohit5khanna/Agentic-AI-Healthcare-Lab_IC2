@@ -466,15 +466,19 @@ def _(
             wrap=True,
         ),
     ]
-    _execution_controls = []
+    _navigation_note = []
     if selected_id is not None:
-        _execution_controls = [
-            mo.md("---\n#### Run controls"),
+        run_controls_view = panel(
+            [
+            mo.md(
+                "### Run this demonstration\n"
+                "Choose the execution mode and any parameters for this case, then run it when you are ready."
+            ),
             mode_selector,
             *_demo_controls,
             run_button,
             mo.callout(
-                "Changing a menu selection or control never starts a model call. Only the green run button executes the demonstration.",
+                "Changing a control never starts a model call or changes the environment. Only the green run button executes the demonstration.",
                 kind="info",
             ),
             mo.md(
@@ -483,9 +487,13 @@ def _(
                 "Replay = preserved behavior  \n"
                 "Live = authentic model response"
             ),
-        ]
+            ],
+            accent="#047857",
+            background="#f0fdf4",
+        )
     else:
-        _execution_controls = [
+        run_controls_view = mo.md("")
+        _navigation_note = [
             mo.callout(
                 "Choose any demonstration from the menu when you are ready. Nothing runs until you press its green run button.",
                 kind="info",
@@ -497,7 +505,7 @@ def _(
             _status,
             mo.md("### Explore the curriculum"),
             *_menu_items,
-            *_execution_controls,
+            *_navigation_note,
         ],
         accent="#0f766e",
         background="#f8fafc",
@@ -510,7 +518,7 @@ def _(
             "overflow-y": "auto",
         }
     )
-    return navigation_panel
+    return navigation_panel, run_controls_view
 
 
 @app.cell
@@ -651,7 +659,7 @@ def _(badge, flow_map, mo, panel):
                         [
                             mo.md(
                                 "### Replay\n"
-                                "Preserved representative behavior with no new call. Useful when workshop connectivity or timing is limited."
+                                "Preserved representative behavior with no new call. Useful when connectivity or time is limited."
                             )
                         ],
                         accent="#7c3aed",
@@ -702,14 +710,25 @@ def _(
     mo,
     panel,
     prediction_selector,
+    request,
+    run_error,
+    run_result,
     selected_case,
     selected_demo,
+    selected_id,
 ):
-    _implementation = (
-        badge("Ready to run", "#047857", "#d1fae5")
-        if selected_demo.implemented
-        else badge("Design preview", "#92400e", "#fef3c7")
-    )
+    if not selected_demo.implemented:
+        _implementation = badge("Design preview", "#92400e", "#fef3c7")
+    elif request is None or request["demo_id"] != selected_id:
+        _implementation = badge("Ready to run", "#047857", "#d1fae5")
+    elif run_error:
+        _implementation = badge("Contained error", "#b91c1c", "#fee2e2")
+    elif run_result is not None and run_result.status == "completed":
+        _implementation = badge("Completed", "#047857", "#d1fae5")
+    elif run_result is not None:
+        _implementation = badge(run_result.status, "#b91c1c", "#fee2e2")
+    else:
+        _implementation = badge("Running", "#1d4ed8", "#dbeafe")
     _facts = "\n".join(f"- {fact}" for fact in selected_case["facts"])
     intro_view = mo.vstack(
         [
@@ -802,7 +821,7 @@ def _(
             [
                 mo.md(
                     "### 2 · Run and observe\n"
-                    "No trajectory is displayed yet. Choose your prediction, then press the green run button in the curriculum panel."
+                    "No trajectory is displayed yet. Choose your prediction, then use the run panel directly above."
                 ),
                 mo.callout(
                     "The run will reveal each model decision, tool call, environment response, gate, and final state in sequence.",
@@ -938,7 +957,7 @@ def _(
                         judgment_selector,
                         reflection_input,
                         mo.callout(
-                            "Workshop prompt: What should the environment enforce instead of merely asking the model to remember?",
+                            "Reflection prompt: What should the environment enforce instead of merely asking the model to remember?",
                             kind="info",
                         ),
                     ],
@@ -970,6 +989,7 @@ def _(
     navigation_panel,
     navigation_toggle,
     result_section,
+    run_controls_view,
     selected_id,
 ):
     _global_styles = mo.Html(
@@ -978,6 +998,8 @@ def _(
           :root { --lab-ink: #0f172a; --lab-muted: #64748b; }
           body { background: #f1f5f9; }
           h1, h2, h3 { color: var(--lab-ink); letter-spacing: -0.02em; }
+          h2, h3 { font-weight: 800 !important; }
+          h3 { font-size: 1.25rem; line-height: 1.3; margin-bottom: .65rem; }
           p, li { line-height: 1.62; }
           pre { overflow-x: auto; }
           details summary::marker { color: #2563eb; }
@@ -1012,7 +1034,9 @@ def _(
         }
     )
     _visible_content = (
-        [home_view] if selected_id is None else [intro_view, result_section]
+        [home_view]
+        if selected_id is None
+        else [intro_view, run_controls_view, result_section]
     )
     _main_content = mo.vstack(_visible_content, gap=1).style(
         {"min-width": "0"}

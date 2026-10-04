@@ -1,6 +1,6 @@
 # Curriculum map
 
-The notebooks are designed as a progression, but a workshop can select a shorter pathway.
+The notebooks are designed as a progression, but a guided session can select a shorter pathway.
 
 ## Full sequence
 
@@ -23,7 +23,7 @@ The notebooks are designed as a progression, but a workshop can select a shorter
 9. **FHIR sandbox** — connects the control loop to structured health records.
 10. **Prompt injection** — demonstrates untrusted content and layered controls.
 
-## Recommended workshop pathways
+## Recommended learning pathways
 
 ### 60-minute clinical introduction
 
@@ -34,7 +34,7 @@ The notebooks are designed as a progression, but a workshop can select a shorter
 
 Use only the demonstration and clinical exercise in each notebook.
 
-### 90-minute deployment-ladder workshop
+### 90-minute deployment-ladder session
 
 - Notebook 1: tool versus model
 - Notebook 2: minimal loop
@@ -44,7 +44,7 @@ Use only the demonstration and clinical exercise in each notebook.
 
 End by asking participants to place each demonstrated action on the project’s deployment ladder.
 
-### Half-day design workshop
+### Half-day design session
 
 - Notebooks 1–7 in sequence
 - Small-group workflow mapping

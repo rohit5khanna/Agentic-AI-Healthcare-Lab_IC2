@@ -47,7 +47,7 @@ jupyter lab
 
 ### Marimo
 
-Use Marimo locally for the complete workshop-friendly application, including optional facilitator-controlled Live mode.
+Use Marimo locally for the complete interactive learning application, including optional facilitator-controlled Live mode.
 
 ```bash
 cd "Agentic Learning Lab Marimo"
@@ -67,4 +67,4 @@ Never place an API key in a notebook cell or commit it to the repository. Copy `
 
 ## Interpretation boundary
 
-Successful execution demonstrates software behavior, tool boundaries, and workshop concepts. It does not establish clinical correctness, comparative model superiority, or readiness for use with real patients.
+Successful execution demonstrates software behavior, tool boundaries, and learning concepts. It does not establish clinical correctness, comparative model superiority, or readiness for use with real patients.

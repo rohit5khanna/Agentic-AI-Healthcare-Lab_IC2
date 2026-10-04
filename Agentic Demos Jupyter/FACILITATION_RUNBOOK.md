@@ -1,10 +1,10 @@
-# Workshop runbook
+# Facilitation runbook
 
 This runbook is for a facilitator operating the Healthcare Agent Learning Lab. It does not turn the demonstrations into clinical decision support.
 
 ## Recommended live pathway
 
-For a 90-minute workshop, use Notebooks 1, 2, 3, 6, and 9. The sequence moves from a single model call to a tool-using loop, an enforced human gate, repeated-sampling uncertainty, and a synthetic FHIR environment.
+For a 90-minute guided session, use Notebooks 1, 2, 3, 6, and 9. The sequence moves from a single model call to a tool-using loop, an enforced human gate, repeated-sampling uncertainty, and a synthetic FHIR environment.
 
 Notebook 6 intentionally performs 76 model calls. In the latest validation it took about 163 seconds and used 19,313 tokens. Keep the full run when latency is a teaching objective. Start it before the discussion about operational burden rather than leaving the group in silence.
 
@@ -47,4 +47,4 @@ Notebook 6 intentionally performs 76 model calls. In the latest validation it to
 
 ## What to collect
 
-For each proposed use case, record the deployment rung, minimum evidence, allowed tools, prohibited actions, reviewer role, escalation condition, acceptable final state, and likely failure modes. These workshop outputs are candidate requirements; they are not physician-approved ground truth.
+For each proposed use case, record the deployment rung, minimum evidence, allowed tools, prohibited actions, reviewer role, escalation condition, acceptable final state, and likely failure modes. These learning-session outputs are candidate requirements; they are not physician-approved ground truth.

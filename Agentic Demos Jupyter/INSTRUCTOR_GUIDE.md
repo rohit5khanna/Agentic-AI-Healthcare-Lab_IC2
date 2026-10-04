@@ -6,7 +6,7 @@ The goal is not to persuade participants that an agent is clinically capable. Th
 
 Clinical participants are not “nontechnical users” in this lab. They are the experts on acceptable evidence, consequential actions, escalation, ambiguity, workload, and accountability.
 
-## Before the workshop
+## Before the learning session
 
 1. Run `python3 validate_lab.py` with no API key.
 2. Decide which exercises will be live and which will use mock or replay. Never present a mock or replay as a fresh model run.
@@ -89,7 +89,7 @@ For each group, record:
 - acceptable final state;
 - unresolved question requiring domain review.
 
-These outputs can later inform physician-authored task templates without treating workshop discussion as validated clinical ground truth.
+These outputs can later inform physician-authored task templates without treating learning-session discussion as validated clinical ground truth.
 
 ## Language to use
 

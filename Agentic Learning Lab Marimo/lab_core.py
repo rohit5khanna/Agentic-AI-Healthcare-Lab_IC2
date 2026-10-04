@@ -1322,7 +1322,7 @@ def run_demo(
     evidence: list[str] | None = None,
     parameters: dict[str, Any] | None = None,
 ) -> DemoRun:
-    """Execute one translated demonstration with workshop-safe defaults."""
+    """Execute one translated demonstration with learning-safe defaults."""
     if demo_id not in CATALOG_BY_ID:
         raise ValueError(f"Unknown demo id: {demo_id}")
     normalized_mode = mode.strip().lower()
