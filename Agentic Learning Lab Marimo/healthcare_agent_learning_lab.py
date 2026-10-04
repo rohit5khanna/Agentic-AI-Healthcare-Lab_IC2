@@ -47,6 +47,13 @@ def _(DEMO_CATALOG, mo):
         label="",
         inline=False,
     )
+    curriculum_menu_view = curriculum_menu.style(
+        {
+            "--text-sm": "1.02rem",
+            "--text-sm--line-height": "1.45",
+            "--font-weight-normal": "650",
+        }
+    )
     mode_selector = mo.ui.radio(
         options=["Explore", "Replay", "Live"],
         value="Explore",
@@ -167,6 +174,7 @@ def _(DEMO_CATALOG, mo):
         architecture_selector,
         chain_length,
         curriculum_menu,
+        curriculum_menu_view,
         evidence_selector,
         gate_decision,
         judgment_selector,
@@ -401,6 +409,7 @@ def _(
     badge,
     chain_length,
     curriculum_menu,
+    curriculum_menu_view,
     evidence_selector,
     gate_decision,
     memory_policy,
@@ -453,7 +462,7 @@ def _(
         else f"Demo {selected_id} · {selected_demo.title}"
     )
     _menu_items = [
-        curriculum_menu,
+        curriculum_menu_view,
         mo.hstack(
             [
                 mo.Html(
