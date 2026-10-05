@@ -1,8 +1,8 @@
 # Healthcare Agent Learning Lab — Marimo Edition
 
-This is the participant-facing companion to the ten-notebook Jupyter learning lab. It is one Marimo notebook/application with a dedicated Home page and an app-controlled curriculum menu for choosing among ten core demonstrations plus an Applied Healthcare case exercise. The panel fully hides and the learning canvas reflows when the participant selects **Curriculum**.
+This is the participant-facing companion to the ten-notebook Jupyter learning lab. It is one Marimo notebook/application with a dedicated Home page, a Barry introduction, ten numbered core demonstrations, and a separately labeled Applied Healthcare case study. The panel fully hides and the learning canvas reflows when the participant selects **Curriculum**.
 
-Home introduces the agent–tool–environment–human relationship, the four curriculum perspectives, the standard learning sequence, and the Explore, Replay, and Live modes. Every demonstration is permanently visible in the menu and can be opened with one click; navigation never executes a model call.
+Home introduces Barry's capabilities and limits, the agent–tool–environment–human relationship, the four curriculum perspectives, the standard learning sequence, and the Explore, Replay, and Live modes. Every activity is visible in the menu and can be opened with one click; navigation never executes a model call.
 
 The unified application provides interactive translations of all ten Jupyter demonstrations:
 
@@ -16,7 +16,7 @@ The unified application provides interactive translations of all ten Jupyter dem
 - Demo 8: Orchestrator and specialist agents
 - Demo 9: Synthetic FHIR sandbox
 - Demo 10: Prompt injection and architectural safety
-- Demo 11: Applied Healthcare PrEP evidence-and-review exercise. On GitHub Pages this is an interactive, deterministic activity over summarized synthetic Synthea evidence—not a model response or AI Agent run.
+- Applied Healthcare case study: PrEP evidence-and-review exercise. This is separate from the numbered demos. On GitHub Pages it is an interactive, deterministic activity over summarized synthetic Synthea evidence—not a model response or AI Agent run.
 
 All cases are fictional or synthetic. The application is for research and education only and must not be used for patient care.
 

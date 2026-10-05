@@ -5,7 +5,7 @@ An interactive learning repository for understanding how healthcare AI agents re
 The repository provides the ten-part core curriculum in two complementary formats, plus an Applied Healthcare case exercise in Marimo:
 
 - **[Agentic Demos Jupyter](<Agentic Demos Jupyter/>)** — ten detailed notebooks for sequential study, code inspection, exercises, and experimentation.
-- **[Agentic Learning Lab Marimo](<Agentic Learning Lab Marimo/>)** — one participant-facing interactive application with a Home page and menu for all ten demonstrations.
+- **[Agentic Learning Lab Marimo](<Agentic Learning Lab Marimo/>)** — one participant-facing interactive application with a Barry introduction, ten numbered demos, and a separately labeled Applied Healthcare case.
 
 All cases and records are fictional or synthetic. This repository is intended for research and education; it is not a clinical protocol or patient-care system.
 
@@ -29,7 +29,8 @@ The public GitHub Pages edition runs entirely in the visitor's browser and provi
 | 8 | Orchestrators and specialists | When does a multi-agent design justify its complexity? |
 | 9 | FHIR sandbox | How do synthetic patient records become an agent environment? |
 | 10 | Prompt injection | Why must safety controls live outside the prompt? |
-| 11 | Applied Healthcare: PrEP case exercise | Which evidence should be gathered, and what must remain for clinician review? |
+
+The Applied Healthcare PrEP case is a separate, unnumbered case study in the Marimo sidebar. It is an interactive learner-directed exercise over summarized synthetic Synthea evidence—not a model response or AI Agent run.
 
 ## Choose an interface
 

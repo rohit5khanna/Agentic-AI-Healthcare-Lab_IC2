@@ -30,18 +30,23 @@ def _(DEMO_CATALOG, mo):
         "08": "Orchestrator & specialists",
         "09": "FHIR sandbox tools",
         "10": "Prompt injection safety",
-        "11": "Applied PrEP case exercise",
     }
     _menu_labels = ["⌂  Home"] + [
-        f"{demo.id}  ·  {_menu_titles[demo.id]}" for demo in DEMO_CATALOG
+        f"{demo.id}  ·  {_menu_titles[demo.id]}"
+        for demo in DEMO_CATALOG
+        if demo.id != "11"
     ]
+    _applied_case_label = "◈  APPLIED HEALTHCARE · PrEP case"
+    _menu_labels.append(_applied_case_label)
     menu_label_to_id = {"⌂  Home": None}
     menu_label_to_id.update(
         {
             f"{demo.id}  ·  {_menu_titles[demo.id]}": demo.id
             for demo in DEMO_CATALOG
+            if demo.id != "11"
         }
     )
+    menu_label_to_id[_applied_case_label] = "11"
     curriculum_menu = mo.ui.radio(
         options=_menu_labels,
         value="⌂  Home",
@@ -540,7 +545,11 @@ def _(
     _viewing_label = (
         "Home"
         if selected_id is None
-        else f"Demo {selected_id} · {selected_demo.title}"
+        else (
+            f"Applied Healthcare · {selected_demo.title}"
+            if selected_id == "11"
+            else f"Demo {selected_id} · {selected_demo.title}"
+        )
     )
     _menu_items = [
         curriculum_menu_view,
@@ -591,9 +600,9 @@ def _(
         ]
     navigation_panel = panel(
         [
-            mo.md("## Healthcare Agent Lab\n**One curriculum · ten demos + one applied case**"),
+            mo.md("## Healthcare Agent Lab\n**Ten numbered demos · separate case study**"),
             _status,
-            mo.md("### Explore the curriculum"),
+            mo.md("### Home + demos 01–10"),
             *_menu_items,
             *_navigation_note,
         ],
@@ -628,7 +637,7 @@ def _(badge, flow_map, mo, panel):
                     ),
                     mo.md(
                         "# See how healthcare agents actually work\n"
-                        "### Ten learning demos plus an interactive Applied Healthcare case exercise."
+                        "### Ten core learning demos, plus a separate interactive Applied Healthcare case."
                     ),
                     mo.md(
                         "This is not a gallery of polished AI answers. The ten core demos show "
@@ -642,14 +651,66 @@ def _(badge, flow_map, mo, panel):
             ),
             mo.hstack(
                 [
-                    mo.stat("11", label="Interactive learning activities", bordered=True),
+                    mo.stat("10", label="Core interactive demos", bordered=True),
+                    mo.stat("1", label="Applied Healthcare case", bordered=True),
                     mo.stat("3", label="Execution modes", bordered=True),
-                    mo.stat("76", label="Calls in the full uncertainty lab", bordered=True),
-                    mo.stat("0", label="Real patient records", bordered=True),
                 ],
                 widths="equal",
                 gap=0.8,
                 wrap=True,
+            ),
+            panel(
+                [
+                    mo.Html(
+                        '<div style="display:flex;align-items:center;gap:.8rem;flex-wrap:wrap">'
+                        '<div role="img" aria-label="Barry, with the y drawn as a stethoscope" style="font-size:2.3rem;font-weight:850;'
+                        'letter-spacing:-.06em;color:#0f172a;line-height:1">'
+                        'Barr<svg aria-hidden="true" viewBox="0 0 34 46" style="width:.92em;height:1.2em;'
+                        'vertical-align:-.29em;overflow:visible"><path d="M4 4 16 27 29 4 M16 27 '
+                        'C15 35 20 39 27 39" fill="none" stroke="#0f766e" stroke-width="4.2" '
+                        'stroke-linecap="round" stroke-linejoin="round"/><circle cx="28" cy="39" r="3.4" '
+                        'fill="#0f766e"/></svg></div>'
+                        '<div><div style="font-size:1.3rem;font-weight:800;color:#0f172a">Meet Barry</div>'
+                        '<div style="color:#475569">The AI Agent explored in this learning lab</div></div></div>'
+                    ),
+                    mo.md(
+                        "Barry is a teaching name for the AI Agent behavior explored across these demos—not one autonomous clinical system. "
+                        "In model-powered activities, Barry can interpret a bounded task, use the tools made available to it, gather synthetic evidence, "
+                        "and draft a response or next step for review."
+                    ),
+                    mo.hstack(
+                        [
+                            panel(
+                                [mo.md("### What Barry can do\nWork with fictional cases and approved tools in a demo; show its tool-use trajectory; summarize retrieved information; and surface missing evidence or uncertainty.")],
+                                accent="#0f766e",
+                                background="#f0fdfa",
+                                fill_height=True,
+                            ).style({"height": "100%", "min-height": "155px"}),
+                            panel(
+                                [mo.md("### What Barry cannot do\nAccess real patient records in this public lab, guarantee that an answer is correct, bypass environment permissions, or independently diagnose, prescribe, or take clinical action.")],
+                                accent="#b91c1c",
+                                background="#fef2f2",
+                                fill_height=True,
+                            ).style({"height": "100%", "min-height": "155px"}),
+                            panel(
+                                [mo.md("### Where people stay in control\nClinicians and learners verify evidence, judge whether a response is appropriate, and retain authority over consequential decisions. Some activities are deterministic exercises rather than model runs.")],
+                                accent="#2563eb",
+                                background="#eff6ff",
+                                fill_height=True,
+                            ).style({"height": "100%", "min-height": "155px"}),
+                        ],
+                        widths="equal",
+                        gap=0.8,
+                        wrap=True,
+                        align="stretch",
+                    ),
+                    mo.callout(
+                        "Barry's stethoscope-shaped y is a visual identity only—not a claim of clinical authority. Barry is for research and education, not patient care.",
+                        kind="info",
+                    ),
+                ],
+                accent="#0f766e",
+                background="#ffffff",
             ),
             panel(
                 [
@@ -778,7 +839,7 @@ def _(badge, flow_map, mo, panel):
                 [
                     mo.md(
                         "## Ready to begin?\n"
-                        "Select any numbered demonstration from the menu. A selection only changes the page; it cannot make an API call or modify an environment."
+                        "Select one of the ten numbered demonstrations or the separate Applied Healthcare case. A selection only changes the page; it cannot make an API call or modify an environment."
                     ),
                     mo.callout(
                         "Research and education only. Every case is fictional or synthetic and must not be used for patient care.",
@@ -827,7 +888,11 @@ def _(
                 [
                     mo.hstack(
                         [
-                            badge(f"Demo {selected_demo.id} · {selected_demo.group}"),
+                            badge(
+                                "Applied Healthcare case study"
+                                if selected_id == "11"
+                                else f"Demo {selected_demo.id} · {selected_demo.group}"
+                            ),
                             _implementation,
                         ],
                         justify="space-between",
@@ -1090,9 +1155,11 @@ def _(
           body { background: #f1f5f9; }
           h1, h2, h3 { color: var(--lab-ink); letter-spacing: -0.02em; }
           h2, h3 { font-weight: 800 !important; }
-          h3 { font-size: 1.25rem; line-height: 1.3; margin-bottom: .65rem; }
-          p, li { line-height: 1.62; }
-          pre { overflow-x: auto; }
+          h3 { font-size: 1.4rem; line-height: 1.35; margin-bottom: .7rem; }
+          p, li { font-size: 1.08rem; line-height: 1.72; }
+          .markdown { font-size: 1.08rem; line-height: 1.72; }
+          pre { overflow-x: auto; font-size: .9rem !important; line-height: 1.55; }
+          [role="radiogroup"] label { font-size: 1.02rem; }
           details summary::marker { color: #2563eb; }
         </style>
         """
