@@ -30,6 +30,7 @@ def _(DEMO_CATALOG, mo):
         "08": "Orchestrator & specialists",
         "09": "FHIR sandbox tools",
         "10": "Prompt injection safety",
+        "11": "Applied PrEP case exercise",
     }
     _menu_labels = ["⌂  Home"] + [
         f"{demo.id}  ·  {_menu_titles[demo.id]}" for demo in DEMO_CATALOG
@@ -59,6 +60,40 @@ def _(DEMO_CATALOG, mo):
         value="Explore",
         label="Execution mode",
         inline=True,
+    )
+    prep_variation_selector = mo.ui.dropdown(
+        options=[
+            "Original Synthea record",
+            "Add a recent negative HIV result",
+            "Add unresolved reactive screening",
+            "Simulate unavailable guidance",
+        ],
+        value="Original Synthea record",
+        label="Synthetic case variation",
+        full_width=True,
+    )
+    prep_topics_selector = mo.ui.multiselect(
+        options=[
+            "HIV evidence",
+            "Kidney evidence",
+            "Hepatitis B evidence",
+            "STI-related search",
+            "Medication history",
+            "Allergy evidence",
+            "Guidance card",
+        ],
+        value=["HIV evidence", "Kidney evidence", "Medication history", "Guidance card"],
+        label="Which read-only tools should the learner call?",
+        full_width=True,
+    )
+    prep_disposition_selector = mo.ui.radio(
+        options=[
+            "Stage evidence summary for clinician review",
+            "Hold for missing information",
+            "Escalate unresolved result",
+        ],
+        value="Hold for missing information",
+        label="Learner's review disposition",
     )
     gate_decision = mo.ui.radio(
         options=["Reject", "Request more information", "Approve"],
@@ -183,6 +218,9 @@ def _(DEMO_CATALOG, mo):
         mode_selector,
         navigation_toggle,
         per_step_reliability,
+        prep_disposition_selector,
+        prep_topics_selector,
+        prep_variation_selector,
         prediction_selector,
         reflection_input,
         tool_limit,
@@ -269,7 +307,7 @@ def _(html, json, mo):
                 </div>
                 <div style="padding:.9rem 1rem;color:#334155">
                   <div style="font-size:.78rem;font-weight:800;color:#64748b;text-transform:uppercase;
-                              letter-spacing:.05em">Agent's stated plan</div>
+                              letter-spacing:.05em">Step context</div>
                   <div style="margin:.25rem 0 .8rem;line-height:1.5">{plan}</div>
                   <details>
                     <summary style="cursor:pointer;color:{foreground};font-weight:700">Inspect input and environment response</summary>
@@ -344,6 +382,9 @@ def _(
     mode_selector,
     mo,
     per_step_reliability,
+    prep_disposition_selector,
+    prep_topics_selector,
+    prep_variation_selector,
     prediction_selector,
     selected_id,
     time,
@@ -369,6 +410,25 @@ def _(
                 "chain_length": chain_length.value,
                 "verifier_coverage": verifier_coverage.value,
                 "architecture": architecture_selector.value,
+                "prep_variation": {
+                    "Original Synthea record": "baseline",
+                    "Add a recent negative HIV result": "recent_hiv_result",
+                    "Add unresolved reactive screening": "conflicting_hiv_result",
+                    "Simulate unavailable guidance": "guideline_unavailable",
+                }[prep_variation_selector.value],
+                "prep_topics": [
+                    {
+                        "HIV evidence": "hiv",
+                        "Kidney evidence": "kidney",
+                        "Hepatitis B evidence": "hepatitis_b",
+                        "STI-related search": "sti",
+                        "Medication history": "medications",
+                        "Allergy evidence": "allergies",
+                        "Guidance card": "guidance",
+                    }[topic]
+                    for topic in prep_topics_selector.value
+                ],
+                "prep_disposition": prep_disposition_selector.value,
             },
         },
         label="▶  Run this demonstration",
@@ -417,6 +477,9 @@ def _(
     mo,
     panel,
     per_step_reliability,
+    prep_disposition_selector,
+    prep_topics_selector,
+    prep_variation_selector,
     run_button,
     selected_demo,
     selected_id,
@@ -448,6 +511,16 @@ def _(
         )
     elif selected_id == "08":
         _demo_controls.append(architecture_selector)
+    elif selected_id == "11":
+        _demo_controls.extend(
+            [prep_variation_selector, prep_topics_selector, prep_disposition_selector]
+        )
+        _demo_controls.append(
+            mo.callout(
+                "Interactive case exercise only: the learner selects tools and reviews summarized synthetic FHIR evidence. No AI response or agent run is simulated here; the hosted edition will provide Live model-directed interaction.",
+                kind="warn",
+            )
+        )
     if selected_id in {"05", "07"} and mode_selector.value == "Live":
         _demo_controls.append(
             mo.callout(
@@ -510,7 +583,7 @@ def _(
         ]
     navigation_panel = panel(
         [
-            mo.md("## Healthcare Agent Lab\n**One curriculum · ten demonstrations**"),
+            mo.md("## Healthcare Agent Lab\n**One curriculum · ten demos + one applied case**"),
             _status,
             mo.md("### Explore the curriculum"),
             *_menu_items,
@@ -547,11 +620,12 @@ def _(badge, flow_map, mo, panel):
                     ),
                     mo.md(
                         "# See how healthcare agents actually work\n"
-                        "### Ten interactive demonstrations about models, tools, environments, memory, uncertainty, human gates, and safety."
+                        "### Ten learning demos plus an interactive Applied Healthcare case exercise."
                     ),
                     mo.md(
-                        "This is not a gallery of polished AI answers. It is a learning environment for watching "
-                        "**what an agent decides, which capability it invokes, what the environment returns, and where the system stops it.**"
+                        "This is not a gallery of polished AI answers. The ten core demos show "
+                        "**what an agent decides, which capability it invokes, what the environment returns, and where the system stops it.** "
+                        "The applied PrEP case is a learner-directed evidence and review exercise, not a simulated agent run."
                     ),
                 ],
                 accent="#2563eb",
@@ -560,7 +634,7 @@ def _(badge, flow_map, mo, panel):
             ),
             mo.hstack(
                 [
-                    mo.stat("10", label="Interactive demonstrations", bordered=True),
+                    mo.stat("11", label="Interactive learning activities", bordered=True),
                     mo.stat("3", label="Execution modes", bordered=True),
                     mo.stat("76", label="Calls in the full uncertainty lab", bordered=True),
                     mo.stat("0", label="Real patient records", bordered=True),
@@ -833,7 +907,7 @@ def _(
                     "No trajectory is displayed yet. Choose your prediction, then use the run panel directly above."
                 ),
                 mo.callout(
-                    "The run will reveal each model decision, tool call, environment response, gate, and final state in sequence.",
+                    "The run will reveal each action, tool call, environment response, gate, and final state. Where a model is used, the interface identifies it; the Applied Healthcare case is learner-directed, not a model run.",
                     kind="info",
                 ),
             ],

@@ -2,7 +2,7 @@
 
 An interactive learning repository for understanding how healthcare AI agents reason, use tools, interact with structured environments, expose uncertainty, and remain subject to technical and human controls.
 
-The repository provides the same ten-part curriculum in two complementary formats:
+The repository provides the ten-part core curriculum in two complementary formats, plus an Applied Healthcare case exercise in Marimo:
 
 - **[Agentic Demos Jupyter](<Agentic Demos Jupyter/>)** — ten detailed notebooks for sequential study, code inspection, exercises, and experimentation.
 - **[Agentic Learning Lab Marimo](<Agentic Learning Lab Marimo/>)** — one participant-facing interactive application with a Home page and menu for all ten demonstrations.
@@ -13,7 +13,7 @@ All cases and records are fictional or synthetic. This repository is intended fo
 
 **[Launch the interactive Marimo learning lab](https://rohit5khanna.github.io/Agentic-AI-Healthcare-Lab_IC2/)**
 
-The public GitHub Pages edition runs entirely in the visitor's browser and provides **Explore** and **Replay** modes without an API key. Live model calls remain available only in a facilitator-controlled local or server deployment so credentials are never entered into the public browser application.
+The public GitHub Pages edition runs entirely in the visitor's browser and provides **Explore** and **Replay** without an API key. Its Applied Healthcare PrEP activity is a learner-directed exercise over summarized synthetic Synthea evidence—not a model response or agent run. Fresh model-directed PrEP runs remain for the authenticated hosted Marimo edition so credentials never enter the public browser application.
 
 ## Curriculum
 
@@ -29,6 +29,7 @@ The public GitHub Pages edition runs entirely in the visitor's browser and provi
 | 8 | Orchestrators and specialists | When does a multi-agent design justify its complexity? |
 | 9 | FHIR sandbox | How do synthetic patient records become an agent environment? |
 | 10 | Prompt injection | Why must safety controls live outside the prompt? |
+| 11 | Applied Healthcare: PrEP case exercise | Which evidence should be gathered, and what must remain for clinician review? |
 
 ## Choose an interface
 
@@ -61,7 +62,7 @@ marimo run healthcare_agent_learning_lab.py
 
 - **Explore:** deterministic teaching behavior with no API key.
 - **Replay:** preserved representative behavior with no new model call.
-- **Live:** authentic model behavior with visible latency and token use. Live mode requires `OPENAI_API_KEY` and `MODEL` in a trusted local or server environment and is intentionally disabled on GitHub Pages.
+- **Live:** authentic model behavior with visible latency and token use. Live mode requires `OPENAI_API_KEY` and `MODEL` in a trusted local or server environment and is intentionally disabled on GitHub Pages. The public PrEP activity is an interactive evidence-and-review exercise; it does not make a model call.
 
 Never place an API key in a notebook cell or commit it to the repository. Copy `.env.example` to an untracked `.env`, or configure credentials in the shell that launches the application.
 

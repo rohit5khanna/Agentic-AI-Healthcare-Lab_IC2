@@ -1,6 +1,6 @@
 # Healthcare Agent Learning Lab — Marimo Edition
 
-This is the participant-facing companion to the ten-notebook Jupyter learning lab. It is one Marimo notebook/application with a dedicated Home page and an app-controlled curriculum menu for choosing among all ten demonstrations. The panel fully hides and the learning canvas reflows when the participant selects **Curriculum**.
+This is the participant-facing companion to the ten-notebook Jupyter learning lab. It is one Marimo notebook/application with a dedicated Home page and an app-controlled curriculum menu for choosing among ten core demonstrations plus an Applied Healthcare case exercise. The panel fully hides and the learning canvas reflows when the participant selects **Curriculum**.
 
 Home introduces the agent–tool–environment–human relationship, the four curriculum perspectives, the standard learning sequence, and the Explore, Replay, and Live modes. Every demonstration is permanently visible in the menu and can be opened with one click; navigation never executes a model call.
 
@@ -16,6 +16,7 @@ The unified application provides interactive translations of all ten Jupyter dem
 - Demo 8: Orchestrator and specialist agents
 - Demo 9: Synthetic FHIR sandbox
 - Demo 10: Prompt injection and architectural safety
+- Demo 11: Applied Healthcare PrEP evidence-and-review exercise. On GitHub Pages this is an interactive, deterministic activity over summarized synthetic Synthea evidence—not a model response or AI Agent run.
 
 All cases are fictional or synthetic. The application is for research and education only and must not be used for patient care.
 
@@ -39,7 +40,7 @@ marimo edit healthcare_agent_learning_lab.py
 
 - **Explore:** deterministic teaching behavior; no API key required.
 - **Replay:** clearly labelled saved or deterministic trace behavior; no new API call.
-- **Live:** genuine model calls for model-based modules. The routing and compounding-reliability modules remain explicitly deterministic. Requires `OPENAI_API_KEY` and `MODEL` in the server environment when calls are needed.
+- **Live:** genuine model calls for model-based modules. The routing and compounding-reliability modules remain explicitly deterministic. The public PrEP case runner in this repository intentionally has no Live model behavior; the authentic model-directed PrEP agent is maintained in the separate applied-track app for the authenticated hosted edition. Live calls require `OPENAI_API_KEY` and `MODEL` in a trusted server environment.
 
 Demo 6 intentionally performs all 76 sequential calls in Live mode. Its latency, token use, and cost are part of the learning experience rather than overhead to hide.
 
@@ -66,7 +67,7 @@ python3 -m unittest -v test_lab_core.py
 marimo check healthcare_agent_learning_lab.py
 ```
 
-An optional live smoke test reuses Barry's local `.env` without printing or copying the key:
+An optional live smoke test reads local credentials without printing or copying the key:
 
 ```bash
 python3 live_smoke_test.py

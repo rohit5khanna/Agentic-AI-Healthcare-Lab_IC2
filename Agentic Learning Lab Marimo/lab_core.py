@@ -181,6 +181,19 @@ DEMO_CATALOG: tuple[DemoDefinition, ...] = (
         "Inspect a malicious note and identify which architectural layer must stop it.",
         True,
     ),
+    DemoDefinition(
+        "11",
+        "Applied Healthcare: PrEP case exercise",
+        "Applied Healthcare",
+        "Which evidence should be gathered, and what must remain for clinician review?",
+        (
+            "Distinguish historical findings from current decision-ready evidence.",
+            "Recognize that missing data are not negative findings.",
+            "Use a human review gate without implying a model-generated decision.",
+        ),
+        "Choose synthetic record topics to inspect, compare a labelled case variation, and select a review disposition.",
+        True,
+    ),
 )
 
 
@@ -246,6 +259,18 @@ CASE_CARDS: dict[str, dict[str, Any]] = {
         "facts": ["Retrieved text contains a hidden override", "The content requests an implausible medication change", "The model may comply, refuse, or quote the unsafe text"],
         "why": "Safe behavior in one model response is not a guarantee. Action schemas, policy checks, least privilege, and human gates must contain the proposal.",
         "flow": ["Untrusted content", "Model proposal", "Schema validation", "Policy + gate", "Blocked final state"],
+    },
+    "11": {
+        "title": "Primary-care question about PrEP",
+        "facts": [
+            "A 25-year-old synthetic patient asks whether PrEP might be appropriate",
+            "The unchanged Synthea FHIR bundle contains 429 resources, including 153 Observations",
+            "Six HIV-status observations are historical; the latest is dated 2022-12-25",
+            "No kidney-specific evidence was found in this bundle",
+            "The encounter prompt is an authored teaching overlay, not Synthea-generated",
+        ],
+        "why": "This public activity lets learners query a bounded synthetic record and examine evidence gaps. It is not an AI Agent run: the hosted edition will provide fresh model-directed tool use.",
+        "flow": ["Patient question", "Learner selects tools", "Synthetic FHIR evidence", "Review disposition", "Audit boundary"],
     },
 }
 
@@ -1315,6 +1340,215 @@ def run_prompt_injection(mode: str, decision: str = "Request more information") 
     )
 
 
+def run_prep_case_exercise(
+    mode: str,
+    variation: str = "baseline",
+    topics: list[str] | None = None,
+    disposition: str = "Hold for missing information",
+) -> DemoRun:
+    """Learner-directed exercise over concise extracts from the Synthea case.
+
+    This public-page activity intentionally makes no model calls and does not
+    simulate an AI-generated response. Its observations are derived from the
+    labelled synthetic bundle and teaching overlays.
+    """
+    if mode.strip().lower() == "live":
+        raise ValueError(
+            "The public Applied Healthcare activity is a learner-directed case exercise, not a Live AI Agent run. "
+            "Use Explore or Replay here; model-directed PrEP runs belong in the authenticated hosted edition."
+        )
+    variations = {
+        "baseline": "Original Synthea record",
+        "recent_hiv_result": "Add a recent negative HIV result",
+        "conflicting_hiv_result": "Add unresolved reactive screening",
+        "guideline_unavailable": "Simulate unavailable guidance",
+    }
+    if variation not in variations:
+        raise ValueError(f"Unknown PrEP case variation: {variation}")
+
+    topic_evidence = {
+        "hiv": {
+            "tool": "get_hiv_evidence",
+            "observation": {
+                "historical_observations": 6,
+                "latest_historical_date": "2022-12-25",
+                "reported_value": "not HIV positive",
+                "interpretation": "Historical evidence only; it does not establish current HIV status.",
+                "provenance": "Unchanged Synthea FHIR bundle",
+            },
+        },
+        "kidney": {
+            "tool": "get_kidney_evidence",
+            "observation": {
+                "status": "not_found",
+                "interpretation": "No kidney-specific evidence was found in this bundle; this does not mean the patient has no kidney condition.",
+                "provenance": "Unchanged Synthea FHIR bundle",
+            },
+        },
+        "hepatitis_b": {
+            "tool": "get_hepatitis_b_evidence",
+            "observation": {
+                "date": "2023-04-08",
+                "resource": "Immunization",
+                "description": "Hep B, adult",
+                "status": "completed",
+                "interpretation": "A vaccination record is not a hepatitis B serology result.",
+                "provenance": "Unchanged Synthea FHIR bundle",
+            },
+        },
+        "sti": {
+            "tool": "get_sti_evidence",
+            "observation": {
+                "status": "broad_matches",
+                "match_count": 52,
+                "examples": ["screening questionnaires", "general notes", "urinalysis"],
+                "interpretation": "Broad keyword retrieval is noisy; these matches do not establish an STI diagnosis or current STI testing status.",
+                "provenance": "Unchanged Synthea FHIR bundle",
+            },
+        },
+        "medications": {
+            "tool": "get_medication_history",
+            "observation": {
+                "medication_request_count": 5,
+                "most_recent": {
+                    "date": "2025-04-19",
+                    "description": "ciprofloxacin 500 MG Oral Tablet",
+                    "status": "completed",
+                },
+                "interpretation": "The listed requests are historical; do not treat them as a verified current medication list.",
+                "provenance": "Unchanged Synthea FHIR bundle",
+            },
+        },
+        "allergies": {
+            "tool": "get_allergy_evidence",
+            "observation": {
+                "status": "not_found",
+                "interpretation": "No AllergyIntolerance resource was found; this does not establish that the patient has no allergies.",
+                "provenance": "Unchanged Synthea FHIR bundle",
+            },
+        },
+        "guidance": {
+            "tool": "retrieve_guidance_card",
+            "observation": {
+                "source": "CDC HIV Nexus — Clinical Guidance for PrEP",
+                "card_retrieved_on": "2026-10-04",
+                "topics": ["current HIV assessment", "kidney function", "hepatitis B", "STI screening", "patient preferences"],
+                "boundary": "Dated teaching retrieval card, not a clinical protocol; revalidate before reuse.",
+            },
+        },
+    }
+    if variation == "recent_hiv_result":
+        topic_evidence["hiv"]["observation"] = {
+            **topic_evidence["hiv"]["observation"],
+            "teaching_overlay": {
+                "date": "2026-10-01",
+                "description": "HIV antigen/antibody screening result",
+                "value": "negative",
+                "provenance": "Authored synthetic teaching perturbation; not in the original Synthea bundle",
+            },
+        }
+    elif variation == "conflicting_hiv_result":
+        topic_evidence["hiv"]["observation"] = {
+            **topic_evidence["hiv"]["observation"],
+            "teaching_overlay": {
+                "date": "2026-10-01",
+                "description": "HIV screening result",
+                "value": "reactive; confirmatory testing unresolved",
+                "provenance": "Authored synthetic teaching perturbation; not in the original Synthea bundle",
+            },
+        }
+    elif variation == "guideline_unavailable":
+        topic_evidence["guidance"]["observation"] = {
+            "status": "unavailable",
+            "interpretation": "The guidance retrieval tool did not return a card; do not claim guideline review occurred.",
+        }
+
+    allowed = set(topic_evidence)
+    requested = list(topics or ["hiv", "kidney", "medications", "guidance"])
+    unknown = sorted(set(requested) - allowed)
+    if unknown:
+        raise ValueError(f"Unsupported evidence topics: {unknown}")
+    if mode.strip().lower() == "replay":
+        requested = ["hiv", "kidney", "hepatitis_b", "sti", "medications", "allergies", "guidance"]
+
+    trace: list[TraceStep] = []
+    for index, topic in enumerate(requested):
+        item = topic_evidence[topic]
+        trace.append(
+            TraceStep(
+                index,
+                "Learner-selected read-only tool call; no language model is running in this activity.",
+                item["tool"],
+                {"topic": topic, "case_variation": variations[variation]},
+                item["observation"],
+            )
+        )
+
+    unresolved = variation == "conflicting_hiv_result"
+    guidance_unavailable = variation == "guideline_unavailable" or "guidance" not in requested
+    if disposition not in {
+        "Stage evidence summary for clinician review",
+        "Hold for missing information",
+        "Escalate unresolved result",
+    }:
+        raise ValueError(f"Unsupported review disposition: {disposition}")
+    if unresolved and disposition == "Stage evidence summary for clinician review":
+        environment_gate = "Held: unresolved reactive screening requires clinician assessment; this exercise cannot conclude eligibility."
+        gate_status = "blocked"
+    elif guidance_unavailable and disposition == "Stage evidence summary for clinician review":
+        environment_gate = "Held: guidance was not available in the selected scenario; do not claim it was reviewed."
+        gate_status = "blocked"
+    elif disposition == "Stage evidence summary for clinician review":
+        environment_gate = "Marked for clinician review inside this exercise only; nothing was sent or written to a record."
+        gate_status = "completed"
+    elif disposition == "Escalate unresolved result":
+        environment_gate = "Learner selected escalation for clinician assessment; no clinical action was executed."
+        gate_status = "completed"
+    else:
+        environment_gate = "Held for additional information by the learner; no clinical action was executed."
+        gate_status = "blocked"
+    trace.append(
+        TraceStep(
+            len(trace),
+            "The learner chooses a disposition; the exercise applies the scenario gate.",
+            "human_review_gate",
+            {"disposition": disposition},
+            {"result": environment_gate, "clinical_action_executed": False},
+            gate_status,
+        )
+    )
+    trace.append(
+        TraceStep(
+            len(trace),
+            "Report the exercise state, not a model conclusion.",
+            "final",
+            {},
+            {"variation": variations[variation], "record_modified": False, "external_action": False},
+        )
+    )
+    return DemoRun(
+        "11",
+        mode.strip().lower(),
+        "completed",
+        "The learner explored synthetic evidence and applied a human review disposition. No AI response was generated.",
+        {
+            "Case variation": variations[variation],
+            "Evidence topics inspected": requested,
+            "Disposition selected": disposition,
+            "Environment gate": environment_gate,
+            "Model calls": 0,
+            "Record modified": False,
+            "Clinical action executed": False,
+        },
+        trace,
+        warnings=[
+            "This public Applied Healthcare activity is an interactive, deterministic case exercise—not a simulated AI Agent response.",
+            "Teaching variations are synthetic overlays and are not present in the original Synthea bundle.",
+            "Educational use only. The dated guidance card must be revalidated; this activity is not clinical advice.",
+        ],
+    )
+
+
 def run_demo(
     demo_id: str,
     mode: str,
@@ -1369,6 +1603,13 @@ def run_demo(
         return run_fhir_sandbox(normalized_mode, gate_decision)
     if demo_id == "10":
         return run_prompt_injection(normalized_mode, gate_decision)
+    if demo_id == "11":
+        return run_prep_case_exercise(
+            normalized_mode,
+            str(options.get("prep_variation", "baseline")),
+            list(options.get("prep_topics", [])),
+            str(options.get("prep_disposition", "Hold for missing information")),
+        )
     raise AssertionError(f"No runner registered for catalog demo {demo_id}")
 
 
