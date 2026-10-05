@@ -512,12 +512,20 @@ def _(
     elif selected_id == "08":
         _demo_controls.append(architecture_selector)
     elif selected_id == "11":
-        _demo_controls.extend(
-            [prep_variation_selector, prep_topics_selector, prep_disposition_selector]
-        )
+        _demo_controls.append(prep_variation_selector)
+        if mode_selector.value == "Explore":
+            _demo_controls.append(prep_topics_selector)
+        else:
+            _demo_controls.append(
+                mo.callout(
+                    "Replay uses a fixed evidence-query sequence over the selected case variation; no model runs.",
+                    kind="info",
+                )
+            )
+        _demo_controls.append(prep_disposition_selector)
         _demo_controls.append(
             mo.callout(
-                "Interactive case exercise only: the learner selects tools and reviews summarized synthetic FHIR evidence. No AI response or agent run is simulated here; the hosted edition will provide Live model-directed interaction.",
+                "Interactive case exercise only: Explore lets the learner choose read-only tools; Replay uses a fixed evidence sequence. Both review summarized synthetic FHIR evidence. No AI response or agent run is simulated here; the hosted edition will provide Live model-directed interaction.",
                 kind="warn",
             )
         )

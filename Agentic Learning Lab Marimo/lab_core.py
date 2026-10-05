@@ -1474,10 +1474,15 @@ def run_prep_case_exercise(
     trace: list[TraceStep] = []
     for index, topic in enumerate(requested):
         item = topic_evidence[topic]
+        step_context = (
+            "Learner-selected read-only tool call; no language model is running in this activity."
+            if mode.strip().lower() == "explore"
+            else "Fixed teaching replay of a read-only evidence query; no language model is running in this activity."
+        )
         trace.append(
             TraceStep(
                 index,
-                "Learner-selected read-only tool call; no language model is running in this activity.",
+                step_context,
                 item["tool"],
                 {"topic": topic, "case_variation": variations[variation]},
                 item["observation"],
@@ -1545,7 +1550,8 @@ def run_prep_case_exercise(
             "This public Applied Healthcare activity is an interactive, deterministic case exercise—not a simulated AI Agent response.",
             "Teaching variations are synthetic overlays and are not present in the original Synthea bundle.",
             "Educational use only. The dated guidance card must be revalidated; this activity is not clinical advice.",
-        ],
+        ]
+        + (["Replay follows a fixed evidence-query sequence; it does not use the tool-selection control or call a model."] if mode.strip().lower() == "replay" else []),
     )
 
 
